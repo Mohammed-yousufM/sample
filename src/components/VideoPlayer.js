@@ -1,8 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
 
 function VideoPlayer() {
-  const [textVal, setTextVal] = useState("");
-  const [consoleVal, setConsoleVal] = useState("");
+  // const [textVal, setTextVal] = useState("");
+  // const [consoleVal, setConsoleVal] = useState("");
+
+  let textVal = "";
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
@@ -22,7 +24,7 @@ function VideoPlayer() {
     };
 
     rtcPeerObject.ontrack = (e) => {
-      remoteVideoRef = e.streams[0];
+      remoteVideoRef.current.srcObject = e.streams[0];
       console.log(e.streams, "peer object on track");
     };
 
@@ -31,6 +33,7 @@ function VideoPlayer() {
       .then((stream) => {
         localVideoRef.current.srcObject = stream;
         console.log(stream);
+        console.log(stream.getVideoTracks());
         rtcPeerObject.addTrack(stream.getVideoTracks()[0]);
       })
       .catch((err) => console.log(err, "error found"));
@@ -47,7 +50,7 @@ function VideoPlayer() {
     rtcPeerObject.createOffer().then(
       (sdp) => {
         console.log(JSON.stringify(sdp));
-        setConsoleVal(JSON.stringify(sdp));
+        // setConsoleVal(JSON.stringify(sdp));
         rtcPeerObject.setLocalDescription(sdp);
       },
       (e) => {}
@@ -65,7 +68,7 @@ function VideoPlayer() {
     rtcPeerObject.createAnswer().then(
       (sdp) => {
         console.log(JSON.stringify(sdp));
-        setConsoleVal(JSON.stringify(sdp));
+        // setConsoleVal(JSON.stringify(sdp));
         rtcPeerObject.setLocalDescription(sdp);
       },
       (e) => {}
@@ -79,6 +82,7 @@ function VideoPlayer() {
 
   return (
     <div>
+      {console.log("executing..render..")}
       <video
         ref={localVideoRef}
         autoPlay
@@ -94,11 +98,11 @@ function VideoPlayer() {
       <button onClick={createOffer}>Offer</button>
       <button onClick={createAnswer}>Answer</button>
       <br />
-      <textarea value={textVal} onChange={(e) => setTextVal(e.target.value)} />
+      <textarea onChange={(e) => (textVal = e.target.value)} />
       <button onClick={setRemoteDescription}>Set Remote Desc</button>
       <button onClick={addCandidate}>Add candidate</button>
       <br />
-      <p>{consoleVal}</p>
+      {/* <p>{consoleVal}</p> */}
     </div>
   );
 }
