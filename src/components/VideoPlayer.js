@@ -23,8 +23,8 @@ function VideoPlayer() {
       console.log(e);
     };
 
-    rtcPeerObject.ontrack = (e) => {
-      remoteVideoRef.current.srcObject = e.streams[0];
+    rtcPeerObject.ontrack = async (e) => {
+      remoteVideoRef.current.srcObject = await e.streams[0];
       console.log(e.streams, "peer object on track");
     };
 
